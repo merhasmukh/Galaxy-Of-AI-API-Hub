@@ -33,8 +33,7 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
-    path('', RootView.as_view(), name='root'),  # Add this line for the root URL
-
+    path('', RootView.as_view(), name='root'), 
     path('admin/', admin.site.urls),
     path('api/', include('authentication.urls')),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='swagger-ui'),
