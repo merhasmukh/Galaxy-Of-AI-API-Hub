@@ -22,12 +22,12 @@ from .views import RootView
 # Swagger UI
 schema_view = get_schema_view(
    openapi.Info(
-      title="My API",
+      title="Django API Hub",
       default_version='v1',
-      description="Test the APIs",
+      description="APIs",
       terms_of_service="https://www.google.com/policies/terms/",
-      contact=openapi.Contact(email="contact@myapi.com"),
-      license=openapi.License(name="MIT License"),
+      contact=openapi.Contact(email="mhgn0001@gmail.com"),
+      license=openapi.License(name="Public Licence"),
    ),
    public=True,
 )
