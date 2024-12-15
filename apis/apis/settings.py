@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-sysx9544cja)$ts(q7ru7yo-w(3wahe@7id5@mx&0yc!2m&y4s
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -38,8 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'rest_framework.authtoken',  # For token-based authentication
-    'drf_yasg',  # For Swagger UI
+    'rest_framework.authtoken',  
+    'drf_yasg',  
+    'authentication',
 ]
 
 MIDDLEWARE = [

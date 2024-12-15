@@ -1,74 +1,44 @@
+from functools import wraps
+import logging
+from django.http import JsonResponse
+from django.contrib.auth.hashers import make_password
+from django.views.decorators.csrf import csrf_exempt
+from django.utils import timezone
+import json
+from .models import User
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework import generics
-from .serializers import UserSignupSerializer,UserListSerializer,UserLoginSerializer
-from drf_yasg import openapi
-from rest_framework.views import APIView
-from django.contrib.auth import authenticate
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.generics import ListAPIView
-from django.contrib.auth.models import User
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view
 
-class UserSignupView(generics.CreateAPIView):
+logger = logging.getLogger(__name__)
 
-    @swagger_auto_schema(
-        request_body=UserSignupSerializer,
-        responses={201: openapi.Response("User created successfully")},
-    )
-    def post(self, request, *args, **kwargs):
-        return super().post(request, *args, **kwargs)
-    
 
-class UserLoginView(APIView):
-    @swagger_auto_schema(
-        request_body=UserLoginSerializer,
-        responses={
-            200: openapi.Response(
-                "Login successful",
-                schema=openapi.Schema(
-                    type=openapi.TYPE_OBJECT,
-                    properties={
-                        "access": openapi.Schema(type=openapi.TYPE_STRING),
-                        "refresh": openapi.Schema(type=openapi.TYPE_STRING),
-                    },
-                ),
-            ),
-            401: openapi.Response("Invalid credentials"),
-        },
-    )
-    def post(self, request):
-        serializer = UserLoginSerializer(data=request.data)
-        if serializer.is_valid():
-            username = serializer.validated_data['username']
-            password = serializer.validated_data['password']
-
-            user = authenticate(username=username, password=password)
-            if user:
-                refresh = RefreshToken.for_user(user)
-                return Response({
-                    'access': str(refresh.access_token),
-                    'refresh': str(refresh),
-                }, status=status.HTTP_200_OK)
-            return Response({"detail": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-class UserListView(ListAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserListSerializer
-    permission_classes = [IsAuthenticated]
-
-    @swagger_auto_schema(
-        manual_parameters=[
-            openapi.Parameter(
-                "Authorization",
-                openapi.IN_HEADER,
-                description="Bearer <JWT token>",
-                type=openapi.TYPE_STRING,
-                required=True,
-            )
-        ]
-    )
-    def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
+@swagger_auto_schema(methods=['post'], operation_description="This endpoint allows users to register.")
+@api_view(['POST'])
+def user_registration_data(request):
+    if request.method == 'POST':
+        try:
+            body = json.loads(request.body.decode('utf-8'))
+            
+            username = body.get('username')
+            password = body.get('password')
+            c_password = body.get('c_password')
+            email = body.get('email')
+            mobile = body.get('mobile')
+            date_time = timezone.now()
+            
+            if password != c_password:
+                return JsonResponse({'message': 'Passwords do not match.'}, status=400)
+            
+            if User.objects.filter(email=email).exists():
+                return JsonResponse({'message': 'Email is already registered.'}, status=400)
+            
+            hashed_password = make_password(password)
+            user = User(username=username, password=hashed_password, email=email, mobile=mobile, date_time=date_time)
+            user.save()
+            
+            return JsonResponse({'message': 'Registration successful!'}, status=201)
+        
+        except Exception as e:
+            return JsonResponse({'message': str(e)}, status=500)
+    else:
+        return JsonResponse({'message': 'Invalid request method.'}, status=405)
