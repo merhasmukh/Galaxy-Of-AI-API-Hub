@@ -8,11 +8,22 @@ import json
 from .models import User
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import api_view
+from drf_yasg import openapi
+from .serializers import UserRegistrationSerializer
 
 logger = logging.getLogger(__name__)
 
 
-@swagger_auto_schema(methods=['post'], operation_description="This endpoint allows users to register.")
+@swagger_auto_schema(
+    methods=['post'],
+    operation_description="This endpoint allows users to register.",
+    request_body=UserRegistrationSerializer,  # Specify the input schema
+    responses={
+        201: openapi.Response("Registration successful!"),
+        400: openapi.Response("Invalid data or passwords do not match."),
+        500: openapi.Response("Internal server error."),
+    },
+)
 @api_view(['POST'])
 def user_registration_data(request):
     if request.method == 'POST':
