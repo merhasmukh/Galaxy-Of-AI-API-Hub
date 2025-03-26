@@ -73,7 +73,7 @@ LOGGING = {
 }
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
-    'authentication.custom_auth.CustomAuthBackend'
+    'apps.authentication.custom_auth.CustomAuthBackend'
 ]
 # Application definition
 
@@ -88,7 +88,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',  
     'corsheaders',
     'drf_yasg',  
-    'authentication',
+    'apps.authentication',
 ]
 
 REST_FRAMEWORK = {
