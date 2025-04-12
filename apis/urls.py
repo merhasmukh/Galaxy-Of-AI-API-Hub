@@ -23,5 +23,7 @@ urlpatterns = [
     path('api/auth/', include('apps.authentication.urls')),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='swagger-ui'),
     path('api/chat/', include('apps.aiagents.urls')),
+    path('api/users/chat/', include('apps.users.urls')),
+
 
 ]

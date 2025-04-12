@@ -89,6 +89,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'drf_yasg',  
     'apps.authentication',
+    'apps.users',
+
 ]
 
 REST_FRAMEWORK = {
@@ -162,9 +164,20 @@ WSGI_APPLICATION = 'apis.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.getenv("DB_NAME"),
+        'USER': os.getenv("DB_USERNAME"),
+        'PASSWORD': os.getenv("DB_PASSWORD"),
+        'HOST': os.getenv("DB_HOSTNAME"),  
+        'PORT': os.getenv("DB_PORT"),
+        'OPTIONS': {
+            'sql_mode': 'STRICT_TRANS_TABLES',
+        },
+    },
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
 }
 
 
