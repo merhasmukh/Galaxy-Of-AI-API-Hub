@@ -35,7 +35,11 @@ ALLOWED_HOSTS = ["*","localhost"]
 CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000"
+    "http://localhost:3000",
+    "http://galaxyofai.com",
+    "https://galaxyofai.com",
+    "https://www.galaxyofai.com",
+
    
 ]
 SESSION_ENGINE = "django.contrib.sessions.backends.db"  
