@@ -63,7 +63,9 @@ class CustomTokenObtainPairView(TokenObtainPairView):
                                "username":username,
                                "email":email,
                                "phone":phone,
-                               "dob":dob
+                               "dob":dob,
+                                "profile_image": "",
+
                                }
 
                 return Response(response_info, status=status.HTTP_200_OK)
@@ -165,7 +167,7 @@ def get_user_details(request, user_id):
 @swagger_auto_schema(methods=['post'], operation_description="This endpoint allows users to register.")
 @api_view(['POST'])
 @permission_classes([AllowAny])
-def user_signup_data(request):
+def user_register_data(request):
     if request.method == 'POST':
         try:
             body = request.data
