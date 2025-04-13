@@ -13,6 +13,7 @@ from .prompts.main_prompt import generate_main_prompt
 from .prompts.ai_research_prompt import generate_ai_research_helper_prompt,generate_independent_ai_research_prompt
 from .models import Chat,ChatMessages
 import uuid
+from .serializer import ChatSerializer,ChatMessageSerializer
 # Load API Key from environment variables
 load_dotenv()
 GENAI_API_KEY = os.getenv("GENAI_API_KEY")
@@ -42,7 +43,46 @@ class GeminiAIView(APIView):
             answer=response.text
             ChatMessages.objects.create(chat_id=chat_id, question=user_message, answer=answer)
 
-            return Response({"message": answer}, status=status.HTTP_200_OK)
+            return Response({"message": answer,"chat_id":chat_id}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+class ChatList(APIView):
+
+    def get(self, request):
+        try:
+            user_id = request.user.id
+            
+            chats = Chat.objects.filter(user_id=user_id).order_by('-timestamp')
+            serialized = ChatSerializer(chats, many=True)
+
+
+            return Response({"chats": serialized.data}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+class ChatHistory(APIView):
+
+    def get(self, request,chat_id):
+        try:
+            user_id = request.user.id
+
+            if not chat_id:
+                return Response({"error": "Chat Id is required"}, status=status.HTTP_400_BAD_REQUEST)
+        
+            if not Chat.objects.filter(chat_id=chat_id, user_id=user_id).exists():
+                return Response({"error": "Chat not found or unauthorized"}, status=status.HTTP_404_NOT_FOUND)
+
+            messages = ChatMessages.objects.filter(chat_id=chat_id).order_by("timestamp")
+            serialized = ChatMessageSerializer(messages, many=True)
+            
+
+
+
+        
+            return Response({"chats": serialized.data}, status=status.HTTP_200_OK)
 
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
