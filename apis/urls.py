@@ -7,11 +7,11 @@ from .views import RootView
 # Swagger UI
 schema_view = get_schema_view(
    openapi.Info(
-      title="Django API Hub",
+      title="Galaxy Of AI - API Hub",
       default_version='v1',
       description="APIs",
       terms_of_service="https://www.google.com/policies/terms/",
-      contact=openapi.Contact(email="mhgn0001@gmail.com"),
+      contact=openapi.Contact(email="galaxyofai.com@gmail.com"),
       license=openapi.License(name="Public Licence"),
    ),
    public=True,
@@ -20,6 +20,10 @@ schema_view = get_schema_view(
 urlpatterns = [
     path('', RootView.as_view(), name='root'), 
     path('admin/', admin.site.urls),
-    path('authentication/', include('authentication.urls')),
+    path('api/auth/', include('apps.authentication.urls')),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='swagger-ui'),
+    path('api/chat/', include('apps.aiagents.urls')),
+    path('api/users/', include('apps.users.urls')),
+
+
 ]
