@@ -45,9 +45,10 @@ CORS_ALLOWED_ORIGINS = [
 SESSION_ENGINE = "django.contrib.sessions.backends.db"  
 SESSION_COOKIE_NAME = "pathashala"
 
-# Set the session timeout to 1 hour (3600 seconds)
-SESSION_COOKIE_AGE = 36000  # 1 hour
+# Set the session timeout to 24 hour (86400 seconds)
+SESSION_COOKIE_AGE = 86400  # 24 hour
 CSRF_COOKIE_HTTPONLY = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
 AUTH_USER_MODEL = 'authentication.User'  # Replace 'your_app' with the name of your app
 
