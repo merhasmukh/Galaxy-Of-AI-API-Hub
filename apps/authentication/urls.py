@@ -1,7 +1,7 @@
 # chat/urls.py
 from django.urls import path
 from . import views
-from .views import CustomTokenObtainPairView,GoogleAuthAPIView
+from .views import CustomTokenObtainPairView,GoogleAuthAPIView,TokenValidation
 from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
@@ -16,6 +16,8 @@ urlpatterns = [
     path('reset_password_confirm/', views.reset_password_confirm, name='reset_password_confirm'),
     path('user_details/<int:user_id>/', views.get_user_details, name='user-details'),
     path("google/", GoogleAuthAPIView.as_view(), name="google-auth"),
+    path('validate_token/', TokenValidation.as_view(), name='validate-token')
+
 
 
 ]

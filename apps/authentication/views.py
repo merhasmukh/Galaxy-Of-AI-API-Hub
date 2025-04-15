@@ -138,7 +138,22 @@ class GoogleAuthAPIView(APIView):
             logger.error(str(e))
             return Response({"message": "Invalid Google token"}, status=status.HTTP_400_BAD_REQUEST)
 
-
+class TokenValidation(APIView):
+    def get(self,request):
+        try:
+            user = request.user
+            return Response({
+                "valid": True,
+                "user_id": user.id,
+                "username": user.username,
+                "email": user.email
+            }, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({
+                "valid": False,
+                "error": str(e)
+            }, status=status.HTTP_401_UNAUTHORIZED)
+    
 @api_view(['GET'])
 def get_user_details(request, user_id):
     try:
