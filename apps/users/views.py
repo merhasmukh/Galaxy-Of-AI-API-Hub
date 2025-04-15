@@ -10,9 +10,10 @@ import os
 from dotenv import load_dotenv
 from rest_framework.permissions import AllowAny
 from .prompts.main_prompt import generate_main_prompt
-from .prompts.ai_research_prompt import generate_ai_research_helper_prompt,generate_independent_ai_research_prompt
+from .prompts.ai_research_prompt import generate_ai_research_helper_prompt
 from .models import Chat,ChatMessages
 import uuid
+import re
 from .serializer import ChatSerializer,ChatMessageSerializer
 # Load API Key from environment variables
 load_dotenv()
@@ -35,12 +36,24 @@ class GeminiAIView(APIView):
             if not chat_id:
                 chat_id = str(uuid.uuid4())  # generate unique chat id
                 Chat.objects.create(user_id=user_id, chat_id=chat_id)
+            
+            history = []
+            if chat_id:
+                past_msgs = ChatMessages.objects.filter(chat_id=chat_id).order_by("-timestamp")[:10][::-1]
+            
+                for msg in past_msgs:
+                    history.append({"role": "user", "parts": [{"text": msg.question}]})
+                    history.append({"role": "model", "parts": [{"text": msg.answer}]})
 
+            # Add current message from user
+            history.append({"role": "user", "parts": [{"text": user_message}]})
+            print("History:",history)
             client = genai.GenerativeModel("gemini-2.0-flash")
-            system_prompt=generate_independent_ai_research_prompt(user_message)
+            system_prompt=generate_ai_research_helper_prompt(user_message,history)
 
             response = client.generate_content(system_prompt)
-            answer=response.text
+            answer=response.text.strip()
+
             ChatMessages.objects.create(chat_id=chat_id, question=user_message, answer=answer)
 
             return Response({"message": answer,"chat_id":chat_id}, status=status.HTTP_200_OK)

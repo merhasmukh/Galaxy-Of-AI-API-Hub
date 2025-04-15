@@ -45,9 +45,10 @@ CORS_ALLOWED_ORIGINS = [
 SESSION_ENGINE = "django.contrib.sessions.backends.db"  
 SESSION_COOKIE_NAME = "pathashala"
 
-# Set the session timeout to 1 hour (3600 seconds)
-SESSION_COOKIE_AGE = 36000  # 1 hour
+# Set the session timeout to 24 hour (86400 seconds)
+SESSION_COOKIE_AGE = 86400  # 24 hour
 CSRF_COOKIE_HTTPONLY = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
 AUTH_USER_MODEL = 'authentication.User'  # Replace 'your_app' with the name of your app
 
@@ -220,6 +221,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+
+
+# Define the absolute filesystem path to the directory where collected static files will be stored.
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
