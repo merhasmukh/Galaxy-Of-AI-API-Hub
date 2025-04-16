@@ -12,3 +12,9 @@ class ChatMessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ChatMessages
         fields = ["id", "question", "answer", "timestamp"]
+
+
+class ChatUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Chat
+        fields = ['name', 'description']
