@@ -24,6 +24,8 @@ urlpatterns = [
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='swagger-ui'),
     path('api/chat/', include('apps.aiagents.urls')),
     path('api/users/', include('apps.users.urls')),
+   #  path('api/users/money_management/', include('apps.users.money_management.urls')),
+
 
 
 ]
