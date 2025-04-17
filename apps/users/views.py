@@ -11,10 +11,10 @@ from dotenv import load_dotenv
 from rest_framework.permissions import AllowAny
 from .prompts.main_prompt import generate_main_prompt
 from .prompts.ai_research_prompt import generate_ai_research_helper_prompt
-from .models import Chat,ChatMessages
+from .models import Chat,ChatMessages,ResourceManager
 import uuid
 import re
-from .serializer import ChatSerializer,ChatMessageSerializer,ChatUpdateSerializer
+from .serializer import ChatSerializer,ChatMessageSerializer,ChatUpdateSerializer,ResourceSerializer
 # Load API Key from environment variables
 load_dotenv()
 GENAI_API_KEY = os.getenv("GENAI_API_KEY")
@@ -117,4 +117,17 @@ class ChatUpdateAPIView(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response({"message": "Chat updated successfully", "chat": serializer.data}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class ResourceAPIView(APIView):
+    def get(self, request):
+        resources = ResourceManager.objects.all().order_by('-id')
+        serializer = ResourceSerializer(resources, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        serializer = ResourceSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Resource added successfully", "resource": serializer.data}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
