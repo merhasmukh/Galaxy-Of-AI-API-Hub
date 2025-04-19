@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Chat,ChatMessages,ResourceManager
+from .models import Chat,ChatMessages,ResourceManager,WorkLog
 
 class ChatSerializer(serializers.ModelSerializer):
     class Meta:
@@ -25,3 +25,11 @@ class ResourceSerializer(serializers.ModelSerializer):
     class Meta:
         model = ResourceManager
         fields = ['id', 'title', 'url', 'type']
+
+
+
+
+class WorkLogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WorkLog
+        fields = ['id', 'date', 'start_time', 'end_time', 'duration_hours', 'description']
