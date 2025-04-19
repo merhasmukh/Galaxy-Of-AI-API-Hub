@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 User = get_user_model()# Create your models here.
 class Chat(models.Model):
     id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)  
+    user = models.ForeignKey(User, on_delete=models.CASCADE,default=1)  
     chat_id = models.CharField(max_length=255)
     name = models.CharField(max_length=50,default="AI Assistant") 
     description = models.TextField(default="AI Research")
@@ -26,7 +26,7 @@ class ChatMessages(models.Model):
         return self.chat_id
 
 class ResourceManager(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='resources')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='resources',default=1)
     title = models.CharField(max_length=255)
     url = models.URLField()
     type = models.CharField(max_length=100)
@@ -37,7 +37,7 @@ class ResourceManager(models.Model):
 
 
 class WorkLog(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)  
+    user = models.ForeignKey(User, on_delete=models.CASCADE,default=1)  
     date = models.DateField()
     start_time = models.TimeField()
     end_time = models.TimeField()
@@ -56,7 +56,7 @@ class Projects(models.Model):
         ('in-progress', 'In Progress'),
         ('completed', 'Completed'),
     ]
-    user = models.ForeignKey(User, on_delete=models.CASCADE)  
+    user = models.ForeignKey(User, on_delete=models.CASCADE,default=1)  
     title = models.CharField(max_length=255)
     description = models.TextField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='planned')
