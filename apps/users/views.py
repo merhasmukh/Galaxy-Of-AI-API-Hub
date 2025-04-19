@@ -11,10 +11,10 @@ from dotenv import load_dotenv
 from rest_framework.permissions import AllowAny
 from .prompts.main_prompt import generate_main_prompt
 from .prompts.ai_research_prompt import generate_ai_research_helper_prompt
-from .models import Chat,ChatMessages,ResourceManager
+from .models import Chat,ChatMessages,ResourceManager,WorkLog
 import uuid
 import re
-from .serializer import ChatSerializer,ChatMessageSerializer,ChatUpdateSerializer,ResourceSerializer
+from .serializer import ChatSerializer,ChatMessageSerializer,ChatUpdateSerializer,ResourceSerializer,WorkLogSerializer
 # Load API Key from environment variables
 load_dotenv()
 GENAI_API_KEY = os.getenv("GENAI_API_KEY")
@@ -130,4 +130,23 @@ class ResourceAPIView(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response({"message": "Resource added successfully", "resource": serializer.data}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+class WorkLogAPIView(APIView):
+    def get(self, request):
+        date_filter = request.GET.get('date')
+        if date_filter:
+            logs = WorkLog.objects.filter(date=date_filter).order_by('-start_time')
+        else:
+            logs = WorkLog.objects.all().order_by('-date', '-start_time')
+        serializer = WorkLogSerializer(logs, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        serializer = WorkLogSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Work log added successfully", "log": serializer.data}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
